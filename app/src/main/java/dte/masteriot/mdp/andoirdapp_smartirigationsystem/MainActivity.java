@@ -31,7 +31,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * Main activity for the Smart Irrigation System Android application.
+ * Handles the primary user interface, MQTT communication for real-time monitoring,
+ * and control of the irrigation system components including water pump, sensors,
+ * and weather data visualization.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "HiveMQ";
@@ -54,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
     private ScheduledExecutorService scheduler;
     private boolean isSubscribed = false;
 
+    /**
+     * Creates an MQTT client instance with specified configuration.
+     * Initializes an asynchronous MQTT v3 client with connection parameters for HiveMQ broker.
+     */
     private void createMQTTClient() {
         mqttClient = MqttClient.builder()
                 .useMqttVersion3()
@@ -63,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
                 .buildAsync();
     }
 
+    /**
+     * Establishes connection to the MQTT broker.
+     * Handles connection status, displays connection dialog on failure,
+     * and initiates topic subscriptions on successful connection.
+     */
     private void connectToBroker() {
         mqttClient.connect()
                 .whenComplete((connAck, throwable) -> {
@@ -91,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Subscribes to a specified MQTT topic and sets up message handling.
+     * Routes incoming messages to appropriate processing methods based on topic.
+     *
+     * @param topic The MQTT topic to subscribe to
+     */
     private void subscribeToTopic(String topic) {
         mqttClient.subscribeWith()
                 .topicFilter(topic)
@@ -126,6 +146,13 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Initializes activity components and sets up UI event handlers.
+     * Configures MQTT client, establishes broker connection, and initializes
+     * system controls and monitoring displays.
+     *
+     * @param savedInstanceState Bundle containing the activity's previously saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -254,6 +281,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Publishes control data to the MQTT broker.
+     * Sends system mode, pump state, and water level reset commands.
+     *
+     * @param resetWaterLevel Boolean flag indicating whether to reset water level
+     */
     private void publishTelemetryData(boolean resetWaterLevel) {
         String mode = modeSwitch.getText().toString().toLowerCase();
         String state = pumpSwitch.getText().toString().toLowerCase();
@@ -281,6 +314,10 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Sets initial values for all UI components.
+     * Configures default states for displays, switches, and gauge ranges.
+     */
     private void setInitialValues() {
         editPressure.setText("Waiting...");
         editWind.setText("Waiting...");
@@ -309,6 +346,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Processes weather telemetry data received via MQTT.
+     * Updates UI components with pressure, wind speed, and rain probability.
+     *
+     * @param message JSON formatted string containing weather data
+     */
     private void processWeatherMessage(String message) {
         try {
             JSONObject jsonObject = new JSONObject(message);
@@ -327,6 +370,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Processes sensor telemetry data received via MQTT.
+     * Updates UI components with brightness, humidity, moisture, and temperature readings.
+     *
+     * @param message JSON formatted string containing sensor data
+     */
     private void processSensorMessage(String message) {
         try {
             JSONObject jsonObject = new JSONObject(message);
@@ -347,6 +396,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Processes pump status data received via MQTT.
+     * Updates UI components with pump state and water level information.
+     *
+     * @param message JSON formatted string containing pump status data
+     */
     private void processPumpMessage(String message) {
         try {
             JSONObject jsonObject = new JSONObject(message);
@@ -364,6 +419,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Processes system alarm messages received via MQTT.
+     * Displays alarm notifications using Toast messages.
+     *
+     * @param message JSON formatted string containing alarm data
+     */
     private void processAlarms(String message) {
         try {
             JSONObject jsonObject = new JSONObject(message);
@@ -378,6 +439,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles activity pause state.
+     * Disconnects MQTT client and disables notification switch.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -388,6 +453,10 @@ public class MainActivity extends AppCompatActivity {
         labeledSwitch.setOn(false);
     }
 
+    /**
+     * Handles activity resume state.
+     * Reconnects MQTT client and resets notification switch.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -399,6 +468,12 @@ public class MainActivity extends AppCompatActivity {
         labeledSwitch.setOn(false);
     }
 
+    /**
+     * Unsubscribes from a specified MQTT topic.
+     * Handles unsubscription status and logs results.
+     *
+     * @param topic The MQTT topic to unsubscribe from
+     */
     private void unsubscribeFromTopic(String topic) {
         mqttClient.unsubscribeWith()
                 .topicFilter(topic)

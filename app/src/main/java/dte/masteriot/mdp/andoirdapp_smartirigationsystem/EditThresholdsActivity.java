@@ -18,6 +18,11 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Activity for editing threshold values in a smart irrigation system.
+ * This activity allows users to set and modify various environmental parameter thresholds
+ * through a user interface and communicates these changes via MQTT protocol.
+ */
 public class EditThresholdsActivity extends AppCompatActivity {
     private static final String TAG = "HiveMQ";
     private static final String MQTT_HOST = "broker.hivemq.com";
@@ -48,6 +53,10 @@ public class EditThresholdsActivity extends AppCompatActivity {
     // MQTT Client
     private Mqtt3AsyncClient mqttClient;
 
+    /**
+     * Creates an MQTT client instance with specified configuration.
+     * Initializes an asynchronous MQTT v3 client with connection parameters for HiveMQ broker.
+     */
     private void createMQTTClient() {
         mqttClient = MqttClient.builder()
                 .useMqttVersion3()
@@ -57,6 +66,11 @@ public class EditThresholdsActivity extends AppCompatActivity {
                 .buildAsync();
     }
 
+    /**
+     * Establishes connection to the MQTT broker.
+     * Upon successful connection, enables the save button and publishes a ping message.
+     * Connection status is logged for debugging purposes.
+     */
     private void connectToBroker() {
         mqttClient.connect()
                 .whenComplete((connAck, throwable) -> {
@@ -74,6 +88,10 @@ public class EditThresholdsActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Publishes a ping message to verify MQTT connection.
+     * Sends a JSON formatted ping message to the thresholds topic and subscribes to ping responses.
+     */
     private void publishPing() {
         String message = "{\"ping\": \"ping\"}";
         // Publish the message to the MQTT topic
@@ -94,6 +112,12 @@ public class EditThresholdsActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Subscribes to a specified MQTT topic.
+     * Sets up message handling callback for receiving messages on the subscribed topic.
+     *
+     * @param topic The MQTT topic to subscribe to
+     */
     private void subscribeToTopic(String topic) {
 
         mqttClient.subscribeWith()
@@ -116,6 +140,12 @@ public class EditThresholdsActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Processes incoming MQTT messages containing threshold values.
+     * Parses JSON message and updates UI input fields with received values.
+     *
+     * @param message JSON formatted string containing threshold values
+     */
     private void processMessage(String message) {
         try {
             // Create a JSON object for the input values
@@ -150,6 +180,12 @@ public class EditThresholdsActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Initializes the activity and sets up UI components.
+     * Creates MQTT client, establishes broker connection, and sets up button click listeners.
+     *
+     * @param savedInstanceState Bundle containing the activity's previously saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,6 +232,11 @@ public class EditThresholdsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Validates and saves the threshold values.
+     * Collects input values, performs validation, and publishes updated thresholds via MQTT.
+     * Displays appropriate error messages for invalid inputs.
+     */
     private void saveValues() {
         try {
             // Retrieve values from the EditText fields
@@ -292,6 +333,12 @@ public class EditThresholdsActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Validates if a string represents a valid number without leading zeros.
+     *
+     * @param value The string to validate
+     * @return boolean indicating if the string is a valid number
+     */
     private boolean isValidNumber(String value) {
         // Check if the value is numeric and doesn't have leading zeros
         try {
@@ -302,7 +349,10 @@ public class EditThresholdsActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Initializes all UI view components.
+     * Binds layout elements to their respective view variables.
+     */
     private void initializeViews() {
         rainProbabilityMinInput = findViewById(R.id.rainProbabilityMinInput);
         rainProbabilityMaxInput = findViewById(R.id.rainProbabilityMaxInput);
@@ -322,7 +372,10 @@ public class EditThresholdsActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancelButton);
     }
 
-    // Show loading dialog
+    /**
+     * Displays a loading dialog while fetching initial values.
+     * Shows an indeterminate progress dialog that cannot be canceled by the user.
+     */
     private void showLoadingDialog() {
         // Create a new ProgressDialog instance
         progressDialog = new ProgressDialog(this);
@@ -332,7 +385,9 @@ public class EditThresholdsActivity extends AppCompatActivity {
         progressDialog.show();
     }
 
-    // Dismiss the loading dialog
+    /**
+     * Dismisses the loading dialog if it is currently showing.
+     */
     private void dismissLoadingDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
