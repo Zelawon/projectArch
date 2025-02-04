@@ -47,7 +47,6 @@ public class EditThresholdsActivity extends AppCompatActivity {
     private String humidityMinValue = "", humidityMaxValue = "";
     private String soilMoistureMin = "", soilMoistureMax = "";
     private String pressureMin = "", pressureMax = "";
-    private String waterTankMin = "";
     private String brightnessMin = "", brightnessMax = "";
 
     // MQTT Client
@@ -261,8 +260,7 @@ public class EditThresholdsActivity extends AppCompatActivity {
                     windSpeedMinValue.isEmpty() || windSpeedMaxValue.isEmpty() ||
                     humidityMinValue.isEmpty() || humidityMaxValue.isEmpty() ||
                     soilMoistureMin.isEmpty() || soilMoistureMax.isEmpty() ||
-                    pressureMin.isEmpty() || pressureMax.isEmpty() ||
-                    waterTankMin.isEmpty() || brightnessMin.isEmpty() || brightnessMax.isEmpty()) {
+                    pressureMin.isEmpty() || pressureMax.isEmpty() || brightnessMin.isEmpty() || brightnessMax.isEmpty()) {
 
                 // Show a Toast message if any field is empty
                 Toast.makeText(this, "All fields must be filled!", Toast.LENGTH_SHORT).show();
@@ -275,8 +273,7 @@ public class EditThresholdsActivity extends AppCompatActivity {
                     !isValidNumber(windSpeedMinValue) || !isValidNumber(windSpeedMaxValue) ||
                     !isValidNumber(humidityMinValue) || !isValidNumber(humidityMaxValue) ||
                     !isValidNumber(soilMoistureMin) || !isValidNumber(soilMoistureMax) ||
-                    !isValidNumber(pressureMin) || !isValidNumber(pressureMax) ||
-                    !isValidNumber(waterTankMin) || !isValidNumber(brightnessMin) || !isValidNumber(brightnessMax)) {
+                    !isValidNumber(pressureMin) || !isValidNumber(pressureMax) || !isValidNumber(brightnessMin) || !isValidNumber(brightnessMax)) {
 
                 // Show a Toast message if any value is not a valid number
                 Toast.makeText(this, "Please enter valid numeric values (no leading zeros)!", Toast.LENGTH_SHORT).show();
@@ -297,7 +294,6 @@ public class EditThresholdsActivity extends AppCompatActivity {
             message.put("soilMoistureMax", soilMoistureMax);
             message.put("pressureMin", pressureMin);
             message.put("pressureMax", pressureMax);
-            message.put("waterTankMin", waterTankMin);
             message.put("brightnessMin", brightnessMin);
             message.put("brightnessMax", brightnessMax);
 
